@@ -10,6 +10,8 @@ all:
 	sed 's/new lessc_parser/new %BOOTCODE%_lessc_parser/g' | \
 	sed 's/array("lessc"/array("%BOOTCODE%_lessc"/g' | \
 	sed 's/array('\''lessc'\''/array('\''%BOOTCODE%_lessc'\''/g' \
+	sed 's/protected function makeParser/public function makeParser/g' \
+	sed 's/protected function findImport/public function findImport/g' \
 	> ../../source/libraries/lessc.php
 
 test:
