@@ -187,6 +187,7 @@ class Less_Parser extends Less_Cache{
 	 */
 	private $filename;
 
+	public static $instance;
 
 	/**
 	 *
@@ -4546,7 +4547,6 @@ class Less_Tree_Import extends Less_Tree{
 		//import once
 		$realpath = realpath($full_path);
 
-
 		if( $realpath && Less_Parser::FileParsed($realpath) ){
 			if( isset($this->currentFileInfo['reference']) ){
 				$evald->skip = true;
@@ -4589,6 +4589,12 @@ class Less_Tree_Import extends Less_Tree{
 
 		if( (isset($this->options['multiple']) && $this->options['multiple']) ){
 			$import_env->importMultiple = true;
+		}
+
+		// @hack: Report import task
+		if (!empty(Less_Parser::$instance)) {
+			$parser = Less_Parser::$instance;
+			$parser->task->report("Parsing $full_path.", 'info');
 		}
 
 		$parser = new Less_Parser($import_env);
@@ -4959,7 +4965,7 @@ class Less_Tree_MixinCall extends Less_Tree{
 				$this->index, null, $this->currentFileInfo['filename']);
 
 		}else{
-			throw new Less_CompilerException(trim($this->selector->toCSS($env)) . " is undefined", $this->index);
+			throw new Less_CompilerException(trim($this->selector->toCSS($env)) . " is undefined", $this->index, null, $this->currentFileInfo['filename']);
 		}
 	}
 }
@@ -5579,6 +5585,7 @@ class Less_Tree_Ruleset extends Less_Tree{
 			$rule = $this->rules[$i];
 
 			if( $rule instanceof Less_Tree_Import ){
+
 				$rules = $rule->compile($env);
 				if( is_array($rules) ){
 					array_splice($this->rules, $i, 1, $rules);
@@ -6209,7 +6216,7 @@ class Less_Tree_Variable extends Less_Tree{
 		}
 
 		if ($this->evaluating) {
-			throw new Less_CompilerException("Recursive variable definition for " . $name, $this->index, null, $this->currentFileInfo['file']);
+			throw new Less_CompilerException("Recursive variable definition for " . $name, $this->index, null, $this->currentFileInfo['filename']);
 		}
 
 		$this->evaluating = true;
