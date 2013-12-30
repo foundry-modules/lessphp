@@ -1,9 +1,4 @@
 all:
-	cat Less.php | \
-	sed 's/Less_/%BOOTCODE%_Less_/g' \
-	> ../../source/libraries/less.php
-
-old:
 	cat lessc.inc.php | \
 	sed 's/class lessc/class %BOOTCODE%_lessc/g' | \
 	sed 's/class lessc_parser/class %BOOTCODE%_lessc_parser/g' | \
