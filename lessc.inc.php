@@ -111,7 +111,8 @@ class lessc {
 
 		$realPath = $this->findImport($url);
 
-		if ($realPath === null) return false;
+		// @hack: If import file could not be found, don't fallback to css @import.
+		if ($realPath === null) return array(false, null);
 
 		if ($this->importDisabled) {
 			return array(false, "/* import disabled */");
